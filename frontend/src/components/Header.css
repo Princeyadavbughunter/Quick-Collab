@@ -1,0 +1,301 @@
+/* HeaderWrapper takes the full width gradient */
+.header-wrapper {
+    width: 100%;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+/* The actual navbar is pill shaped and centered */
+.modern-header {
+    background-color: #ffffff;
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1300px;
+    padding: 0.6rem 2.5rem;
+    box-sizing: border-box;
+}
+
+/* Logo Section */
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.logo-icon {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.diamond {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    transform: rotate(45deg);
+    border-radius: 2px;
+}
+
+.diamond.lime {
+    background-color: #a5d400;
+    top: 16px;
+    left: 4px;
+    z-index: 1;
+}
+
+.diamond.dark-green {
+    background-color: #005045;
+    top: 4px;
+    left: 16px;
+    z-index: 2;
+}
+
+.diamond.teal {
+    background-color: #3fbfad;
+    top: 16px;
+    left: 28px;
+    z-index: 1;
+}
+
+.brand-name {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Open Sauce One', sans-serif;
+    font-weight: 800;
+    color: #005c50;
+    line-height: 1;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+/* Navigation Menu */
+.main-nav {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    justify-content: space-between;
+    margin-left: 4.5rem;
+}
+
+.main-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 3rem;
+}
+
+.main-nav a {
+    font-family: 'Open Sauce One', sans-serif;
+    text-decoration: none;
+    color: #005c50;
+    font-weight: 600;
+    /* Bolder text */
+    font-size: 1rem;
+    transition: opacity 0.2s ease;
+}
+
+.main-nav a:hover {
+    opacity: 0.7;
+}
+
+/* CTA Button */
+.cta-section {
+    margin-left: auto;
+}
+
+.cta-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #005c50;
+    color: #ffffff !important;
+    font-family: 'Open Sauce One', sans-serif;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: 50px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.cta-button:hover {
+    background-color: #004b41;
+    transform: translateY(-2px);
+}
+
+.whatsapp-icon {
+    font-size: 1.25rem;
+}
+
+/* Hamburger Menu Icon */
+.hamburger-menu {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    z-index: 100;
+}
+
+.hamburger-menu span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: #005c50;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* Hamburger Animation */
+.hamburger-menu.active span:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .header-wrapper {
+        padding: 0.75rem;
+    }
+
+    .modern-header {
+        border-radius: 25px;
+        padding: 0.75rem 1.25rem;
+        gap: 1rem;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    .hamburger-menu {
+        display: flex;
+        order: 2;
+    }
+
+    .cta-section {
+        order: 3;
+    }
+
+    .main-nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem 1.5rem;
+        display: none;
+        /* Hidden by default */
+        z-index: 99;
+        margin-top: 15px;
+        margin-left: 0;
+        /* Reset desktop margin */
+        border: 1px solid rgba(0, 92, 80, 0.08);
+        /* Subtle border */
+    }
+
+    .main-nav.active {
+        display: flex;
+        /* Changed from block to flex */
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .main-nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.8rem;
+        margin-bottom: 2rem;
+        width: 100%;
+    }
+
+    .cta-section {
+        margin-left: 0;
+        /* Reset desktop margin */
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding-top: 1.5rem;
+        border-top: 1px dashed rgba(0, 92, 80, 0.15);
+        /* Separator line */
+    }
+
+    .logo-section {
+        order: 1;
+        gap: 0.5rem;
+    }
+
+    .brand-name {
+        font-size: 0.95rem;
+    }
+
+    .cta-button {
+        padding: 0.9rem 2.5rem;
+        font-size: 1rem;
+        width: 100%;
+        max-width: 260px;
+        justify-content: center;
+        box-shadow: 0 5px 15px rgba(0, 92, 80, 0.15);
+        color: #ffffff !important;
+        /* Force white color to prevent inheritance of dark nav color */
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-wrapper {
+        padding: 0.5rem;
+    }
+
+    .modern-header {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .main-nav a {
+        font-size: 0.9rem;
+    }
+
+    .logo-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .diamond {
+        width: 12px;
+        height: 12px;
+    }
+
+    .diamond.lime {
+        top: 12px;
+        left: 2px;
+    }
+
+    .diamond.dark-green {
+        top: 3px;
+        left: 12px;
+    }
+
+    .diamond.teal {
+        top: 12px;
+        left: 22px;
+    }
+
+    .brand-name {
+        font-size: 0.8rem;
+    }
+}
