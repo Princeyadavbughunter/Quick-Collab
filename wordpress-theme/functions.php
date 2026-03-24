@@ -170,7 +170,7 @@ add_action( 'customize_register', 'quickcollab_customize_register' );
  */
 function quickcollab_scripts() {
     // Standard style.css
-    wp_enqueue_style( 'quickcollab-style', get_stylesheet_uri(), array(), '1.0.3' );
+    wp_enqueue_style( 'quickcollab-style', get_stylesheet_uri(), array(), '1.0.5' );
 
     // Main JS
     wp_enqueue_script( 'quickcollab-main-js', get_template_directory_uri() . '/assets/js/main.js', array(), '1.0.1', true );
