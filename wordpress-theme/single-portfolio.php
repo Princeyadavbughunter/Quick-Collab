@@ -48,20 +48,42 @@ get_header(); ?>
         <section class="campaign-videos">
             <div class="video-grid">
                 <?php 
-                // We'll show up to 3 videos if they exist
                 for($i=1; $i<=3; $i++) : 
                     $video_file = get_template_directory_uri() . "/portfolio/" . $folder . "/Vid" . $i . ".mp4";
-                    // Also check for lowercase "vid"
                     $video_path = get_template_directory() . "/portfolio/" . $folder . "/Vid" . $i . ".mp4";
                     if ( ! file_exists( $video_path ) ) {
                         $video_file = get_template_directory_uri() . "/portfolio/" . $folder . "/vid" . $i . ".mp4";
+                        $video_path = get_template_directory() . "/portfolio/" . $folder . "/vid" . $i . ".mp4";
                     }
+                    if ( ! file_exists( $video_path ) ) continue; // skip if video doesn't exist
                 ?>
                 <div class="video-item">
-                    <video controls preload="metadata">
-                        <source src="<?php echo esc_url($video_file); ?>" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
+                    <div class="video-wrap">
+                        <video
+                            class="portfolio-video"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            preload="auto"
+                        >
+                            <source src="<?php echo esc_url($video_file); ?>" type="video/mp4">
+                        </video>
+                        <!-- Click overlay: pause/play on tap -->
+                        <div class="video-overlay" onclick="
+                            var v = this.previousElementSibling;
+                            if(v.paused){ v.play(); this.classList.remove('paused'); }
+                            else { v.pause(); this.classList.add('paused'); }
+                        ">
+                            <span class="play-icon">▶</span>
+                        </div>
+                        <!-- Audio toggle -->
+                        <button class="audio-btn" onclick="
+                            var v = this.closest('.video-wrap').querySelector('video');
+                            v.muted = !v.muted;
+                            this.textContent = v.muted ? '🔇' : '🔊';
+                        " title="Toggle Audio">🔇</button>
+                    </div>
                 </div>
                 <?php endfor; ?>
             </div>

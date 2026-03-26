@@ -170,7 +170,7 @@ add_action( 'customize_register', 'quickcollab_customize_register' );
  */
 function quickcollab_scripts() {
     // Standard style.css
-    wp_enqueue_style( 'quickcollab-style', get_stylesheet_uri(), array(), '1.1.0' );
+    wp_enqueue_style( 'quickcollab-style', get_stylesheet_uri(), array(), '1.1.3' );
 
     // Main JS
     wp_enqueue_script( 'quickcollab-main-js', get_template_directory_uri() . '/assets/js/main.js', array(), '1.0.1', true );
@@ -351,6 +351,20 @@ function quickcollab_sync_portfolio_folders() {
                     update_post_meta( $post_id, '_portfolio_avg_views', '100K+' );
                 }
             }
+        }
+    }
+
+    // ── Cleanup: delete posts whose folder no longer exists ──
+    $all_posts = get_posts( array(
+        'post_type'      => 'portfolio',
+        'posts_per_page' => -1,
+        'post_status'    => 'publish',
+    ) );
+
+    foreach ( $all_posts as $post ) {
+        $folder = get_post_meta( $post->ID, '_portfolio_folder_name', true );
+        if ( $folder && ! is_dir( $portfolio_path . $folder ) ) {
+            wp_delete_post( $post->ID, true ); // true = force delete (bypass Trash)
         }
     }
 }
