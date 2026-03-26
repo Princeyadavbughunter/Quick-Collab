@@ -25,6 +25,7 @@ services:
     volumes:
       - wp_data:/var/www/html
       - ./wordpress-theme:/var/www/html/wp-content/themes/quickcollab
+      - ./frontend/public/Portfolio:/var/www/html/portfolio
 
 volumes:
   db_data:

@@ -50,7 +50,7 @@ wp_nav_menu(array(
         echo '<li><a href="' . esc_url(home_url('/about/')) . '">About</a></li>';
         echo '<li><a href="' . esc_url(home_url('/contact/')) . '">Contact Us</a></li>';
         echo '<li><a href="#service">Service</a></li>';
-        echo '<li><a href="#work">Our Work</a></li>';
+        echo '<li><a href="' . esc_url(home_url('/portfolio/')) . '">Our Work</a></li>';
         echo '<li><a href="#creator">Join as Creator</a></li>';
 
         echo '</ul>';

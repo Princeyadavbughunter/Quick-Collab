@@ -170,7 +170,7 @@ add_action( 'customize_register', 'quickcollab_customize_register' );
  */
 function quickcollab_scripts() {
     // Standard style.css
-    wp_enqueue_style( 'quickcollab-style', get_stylesheet_uri(), array(), '1.0.5' );
+    wp_enqueue_style( 'quickcollab-style', get_stylesheet_uri(), array(), '1.1.0' );
 
     // Main JS
     wp_enqueue_script( 'quickcollab-main-js', get_template_directory_uri() . '/assets/js/main.js', array(), '1.0.1', true );
@@ -179,3 +179,182 @@ function quickcollab_scripts() {
     wp_enqueue_style( 'quickcollab-fonts', 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Poppins:wght@300;400;600;700;800;900&family=Open+Sauce+One:wght@400;500;600;700;900&display=swap', array(), null );
 }
 add_action( 'wp_enqueue_scripts', 'quickcollab_scripts' );
+
+/**
+ * Register Portfolio Custom Post Type
+ */
+function quickcollab_register_portfolio_cpt() {
+    $labels = array(
+        'name'                  => _x( 'Portfolio', 'Post Type General Name', 'quickcollab' ),
+        'singular_name'         => _x( 'Portfolio', 'Post Type Singular Name', 'quickcollab' ),
+        'menu_name'             => __( 'Our Work (Portfolio)', 'quickcollab' ),
+        'name_admin_bar'        => __( 'Portfolio', 'quickcollab' ),
+        'archives'              => __( 'Portfolio Archives', 'quickcollab' ),
+        'attributes'            => __( 'Portfolio Attributes', 'quickcollab' ),
+        'parent_item_colon'     => __( 'Parent Portfolio:', 'quickcollab' ),
+        'all_items'             => __( 'All Portfolios', 'quickcollab' ),
+        'add_new_item'          => __( 'Add New Portfolio item', 'quickcollab' ),
+        'add_new'               => __( 'Add New', 'quickcollab' ),
+        'new_item'              => __( 'New Portfolio', 'quickcollab' ),
+        'edit_item'             => __( 'Edit Portfolio', 'quickcollab' ),
+        'update_item'           => __( 'Update Portfolio', 'quickcollab' ),
+        'view_item'             => __( 'View Portfolio', 'quickcollab' ),
+        'view_items'            => __( 'View Portfolios', 'quickcollab' ),
+        'search_items'          => __( 'Search Portfolio', 'quickcollab' ),
+        'not_found'             => __( 'Not found', 'quickcollab' ),
+        'not_found_in_trash'    => __( 'Not found in Trash', 'quickcollab' ),
+        'featured_image'        => __( 'Card Image', 'quickcollab' ),
+        'set_featured_image'    => __( 'Set Card image', 'quickcollab' ),
+        'remove_featured_image' => __( 'Remove Card image', 'quickcollab' ),
+        'use_featured_image'    => __( 'Use as Card image', 'quickcollab' ),
+        'insert_into_item'      => __( 'Insert into Portfolio', 'quickcollab' ),
+        'uploaded_to_this_item' => __( 'Uploaded to this Portfolio', 'quickcollab' ),
+        'items_list'            => __( 'Portfolios list', 'quickcollab' ),
+        'items_list_navigation' => __( 'Portfolios list navigation', 'quickcollab' ),
+        'filter_items_list'     => __( 'Filter Portfolios list', 'quickcollab' ),
+    );
+    $args = array(
+        'label'                 => __( 'Portfolio', 'quickcollab' ),
+        'description'           => __( 'Case studies and works', 'quickcollab' ),
+        'labels'                => $labels,
+        'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
+        'hierarchical'          => false,
+        'public'                => true,
+        'show_ui'               => true,
+        'show_in_menu'          => true,
+        'menu_position'         => 5,
+        'menu_icon'             => 'dashicons-portfolio',
+        'show_in_admin_bar'     => true,
+        'show_in_nav_menus'     => true,
+        'can_export'            => true,
+        'has_archive'           => true,
+        'exclude_from_search'   => false,
+        'publicly_queryable'    => true,
+        'capability_type'       => 'page',
+        'rewrite'               => array('slug' => 'portfolio'),
+        'show_in_rest'          => true,
+    );
+    register_post_type( 'portfolio', $args );
+}
+add_action( 'init', 'quickcollab_register_portfolio_cpt', 0 );
+
+/**
+ * Add Meta Box for Portfolio Folder Name
+ */
+function quickcollab_portfolio_add_meta_boxes() {
+    add_meta_box(
+        'portfolio_folder_name',
+        __( 'Video Folder Name', 'quickcollab' ),
+        'quickcollab_portfolio_folder_meta_box_callback',
+        'portfolio',
+        'side'
+    );
+}
+add_action( 'add_meta_boxes', 'quickcollab_portfolio_add_meta_boxes' );
+
+function quickcollab_portfolio_folder_meta_box_callback( $post ) {
+    wp_nonce_field( 'quickcollab_portfolio_save_meta', 'quickcollab_portfolio_meta_nonce' );
+    $value = get_post_meta( $post->ID, '_portfolio_folder_name', true );
+    echo '<p><label for="portfolio_folder_name_field">' . __( 'Enter folder name in public/portfolio/ (e.g. 1. Suzuki)', 'quickcollab' ) . '</label></p>';
+    echo '<input type="text" id="portfolio_folder_name_field" name="portfolio_folder_name_field" value="' . esc_attr( $value ) . '" style="width:100%;" />';
+}
+
+/**
+ * Save Meta Box data
+ */
+function quickcollab_portfolio_save_meta( $post_id ) {
+    if ( ! isset( $_POST['quickcollab_portfolio_meta_nonce'] ) ) return;
+    if ( ! wp_verify_nonce( $_POST['quickcollab_portfolio_meta_nonce'], 'quickcollab_portfolio_save_meta' ) ) return;
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+    if ( ! current_user_can( 'edit_post', $post_id ) ) return;
+
+    if ( isset( $_POST['portfolio_folder_name_field'] ) ) {
+        update_post_meta( $post_id, '_portfolio_folder_name', sanitize_text_field( $_POST['portfolio_folder_name_field'] ) );
+    }
+
+    if ( isset( $_POST['portfolio_total_posts'] ) ) update_post_meta( $post_id, '_portfolio_total_posts', sanitize_text_field( $_POST['portfolio_total_posts'] ) );
+    if ( isset( $_POST['portfolio_duration'] ) ) update_post_meta( $post_id, '_portfolio_duration', sanitize_text_field( $_POST['portfolio_duration'] ) );
+    if ( isset( $_POST['portfolio_avg_views'] ) ) update_post_meta( $post_id, '_portfolio_avg_views', sanitize_text_field( $_POST['portfolio_avg_views'] ) );
+}
+add_action( 'save_post', 'quickcollab_portfolio_save_meta' );
+
+/**
+ * Add extra meta fields for campaign results
+ */
+function quickcollab_portfolio_results_meta_boxes() {
+    add_meta_box(
+        'portfolio_results',
+        __( 'Campaign Results', 'quickcollab' ),
+        'quickcollab_portfolio_results_callback',
+        'portfolio',
+        'normal'
+    );
+}
+add_action( 'add_meta_boxes', 'quickcollab_portfolio_results_meta_boxes' );
+
+function quickcollab_portfolio_results_callback( $post ) {
+    $total_posts = get_post_meta( $post->ID, '_portfolio_total_posts', true );
+    $duration = get_post_meta( $post->ID, '_portfolio_duration', true );
+    $avg_views = get_post_meta( $post->ID, '_portfolio_avg_views', true );
+    ?>
+    <p>
+        <label>Total Campaign Posts:</label><br>
+        <input type="text" name="portfolio_total_posts" value="<?php echo esc_attr($total_posts); ?>" />
+    </p>
+    <p>
+        <label>Month Duration:</label><br>
+        <input type="text" name="portfolio_duration" value="<?php echo esc_attr($duration); ?>" />
+    </p>
+    <p>
+        <label>Avg Views:</label><br>
+        <input type="text" name="portfolio_avg_views" value="<?php echo esc_attr($avg_views); ?>" />
+    </p>
+    <?php
+}
+
+/**
+ * Automatically sync Portfolio CPT with folders in /var/www/html/portfolio/
+ */
+function quickcollab_sync_portfolio_folders() {
+    $portfolio_path = get_template_directory() . '/portfolio/';
+    if ( ! is_dir( $portfolio_path ) ) return;
+
+    $folders = array_diff( scandir( $portfolio_path ), array( '.', '..' ) );
+
+    foreach ( $folders as $folder ) {
+        if ( is_dir( $portfolio_path . $folder ) ) {
+            // Check if post already exists for this folder
+            $existing_post = get_posts( array(
+                'post_type'  => 'portfolio',
+                'meta_key'   => '_portfolio_folder_name',
+                'meta_value' => $folder,
+                'posts_per_page' => 1,
+            ) );
+
+            if ( empty( $existing_post ) ) {
+                // Create new portfolio post
+                // Clean up title (remove numbering if present, e.g. "1. Suzuki" -> "Suzuki")
+                $title = preg_replace( '/^\d+\.\s*/', '', $folder );
+                
+                $post_id = wp_insert_post( array(
+                    'post_title'   => $title,
+                    'post_status'  => 'publish',
+                    'post_type'    => 'portfolio',
+                    'post_excerpt' => 'Campaign for ' . $title,
+                ) );
+
+                if ( $post_id ) {
+                    update_post_meta( $post_id, '_portfolio_folder_name', $folder );
+                    // Set some default stats for the cards
+                    update_post_meta( $post_id, '_portfolio_total_posts', '10+' );
+                    update_post_meta( $post_id, '_portfolio_duration', '1 Month' );
+                    update_post_meta( $post_id, '_portfolio_avg_views', '100K+' );
+                }
+            }
+        }
+    }
+}
+// Run periodically or on admin load for demo purposes
+add_action( 'admin_init', 'quickcollab_sync_portfolio_folders' );
+// Also run once on theme activation or just on init for this task
+add_action( 'init', 'quickcollab_sync_portfolio_folders' );
